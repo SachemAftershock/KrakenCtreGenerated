@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -60,6 +61,7 @@ public class RobotContainer {
         configureBindings();
     }
 
+
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
@@ -90,8 +92,8 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        primaryController.leftTrigger().onTrue(MoveToPoseCommand.fromXYW(drivetrain, 1.0, 1.0, 45.0, false));
-        primaryController.rightTrigger().onTrue(MoveToPoseCommand.fromXYW(drivetrain, 0.0, 0.0, 0.0, true));
+        primaryController.leftTrigger().whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(1.0, 1.0, new Rotation2d(45)), false));
+        primaryController.rightTrigger().whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(0.0, 0.0, new Rotation2d(0)), true));
 
         /*
          * Secondary Controller Commands

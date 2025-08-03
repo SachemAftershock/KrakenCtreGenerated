@@ -3,7 +3,7 @@ package frc.robot;
 public class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort1 = 0;
-    public static final int kDriverControllerPort2 = 0;
+    public static final int kDriverControllerPort2 = 1;
   }
 
   public static class ElevatorConstants {

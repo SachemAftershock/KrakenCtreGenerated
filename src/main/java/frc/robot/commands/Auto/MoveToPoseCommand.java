@@ -8,9 +8,12 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+
+import frc.robot.RobotContainer;
 
 public class MoveToPoseCommand extends Command {
     private final CommandSwerveDrivetrain mDrivetrain;
@@ -40,17 +43,19 @@ public class MoveToPoseCommand extends Command {
     private double targetY = 0.0;
     private double targetW = 0.0;
 
-    private final double maxSpeed = 1;
-    private final double maxAngularRate = 0.25;
+    private final double maxSpeed = 2;
+    private final double maxAngularRate = 0.5;
 
-    private final double[] translatePIDs = { 0.5, 0.0, 0.1 };
-    private final double[] rotatePIDs = { 0.1, 0.0, 0.02 };
+    private final double[] translatePIDs = { 5, 0.0, 1 };
+    private final double[] rotatePIDs = { 1, 0.0, 0.2 };
 
     boolean positionReached = false;
     boolean rotationReached = false;
 
-    private final SwerveRequest.RobotCentric moveCommand = new SwerveRequest.RobotCentric().withDeadband(maxSpeed * 0.1)
-            .withRotationalDeadband(maxAngularRate * 0.1).withDriveRequestType(DriveRequestType.Velocity)
+    private final SwerveRequest.FieldCentric moveCommand = new SwerveRequest.FieldCentric()
+            .withDeadband(maxSpeed * 0.1)
+            .withRotationalDeadband(maxAngularRate * 0.1)
+            .withDriveRequestType(DriveRequestType.Velocity)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
     private final SwerveRequest.Idle idleCommand = new SwerveRequest.Idle();
@@ -130,20 +135,33 @@ public class MoveToPoseCommand extends Command {
         ySpeed = yPID.calculate(currentY, targetY);
         wSpeed = wPID.calculate(currentW, targetW);
 
+        SmartDashboard.putNumber("xSpeed Unclamped", xSpeed);
+        SmartDashboard.putNumber("ySpeed Unclamped", ySpeed);
+        SmartDashboard.putNumber("wSpeed Unclamped", wSpeed);
+
         xSpeed = MathUtil.clamp(xSpeed, -maxSpeed, maxSpeed);
         ySpeed = MathUtil.clamp(ySpeed, -maxSpeed, maxSpeed);
         wSpeed = MathUtil.clamp(wSpeed, -maxAngularRate, maxAngularRate);
 
-        mDrivetrain.applyRequest(() -> moveCommand
-                .withVelocityX(xSpeed).withVelocityY(ySpeed).withRotationalRate(wSpeed));
+        SmartDashboard.putNumber("xSpeed", xSpeed);
+        SmartDashboard.putNumber("ySpeed", ySpeed);
+        SmartDashboard.putNumber("wSpeed", wSpeed);
+
+        // mDrivetrain.setControl(moveCommand.withVelocityX(1));
+        mDrivetrain.setControl(moveCommand.withVelocityX(-xSpeed).withVelocityY(-ySpeed).withRotationalRate(wSpeed));
     }
 
     @Override
     public boolean isFinished() {
         positionReached = currentPose.getTranslation().getDistance(mTargetPose.getTranslation()) < positionTolerance;
         rotationReached = Math.abs(currentPose.getRotation().getRadians() - mTargetPose.getRotation().getRadians()) < rotationTolerance;
-    
-        return positionReached && rotationReached;
+        
+        SmartDashboard.putBoolean("Position Reached", positionReached);
+        SmartDashboard.putBoolean("Rotation Reached", rotationReached);
+        boolean out = positionReached && rotationReached;
+        SmartDashboard.putBoolean("Done", out);
+        return out;
+        // return positionReached && rotationReached;
     }
 
     @Override
