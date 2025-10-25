@@ -21,23 +21,87 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 public class TunerConstants {
     // Both sets of gains need to be tuned to your individual robot.
 
-    // The steer motor uses any SwerveModule.SteerRequestType control request with the
-    // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
-    private static final Slot0Configs steerGains = new Slot0Configs()
-    //.withKP(43.6465
-    .withKP(75.161
-        ).withKI(0
-        ).withKD(3.0183
-        ).withKS(0.14342675
-        ).withKV(2.294075
-        ).withKA(0.0929985
-        )
-        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
-    // When using closed-loop control, the drive motor uses the control
-    // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
-    private static final Slot0Configs driveGains = new Slot0Configs()
-        .withKP(0.178285).withKI(0).withKD(0)
-        .withKS(0.15913).withKV(0.122112).withKA(0.013121);
+    // --- Slot convention ---
+    // Slot 0 -> Steer gains (azimuth)
+    // Slot 1 -> Drive Translation gains
+    // Slot 2 -> Drive Rotation gains (PLACEHOLDERS)
+
+    // --- Drive Translation gains per module (FL, FR, BL, BR) from your provided table ---
+    private static final Slot0Configs[] driveTranslationGains = new Slot0Configs[] {
+        // Front Left drive (Motor ID 9)
+        new Slot0Configs()
+            .withKS(0.13445).withKV(0.1255).withKA(0.014277)
+            .withKP(0.18962).withKI(0.0).withKD(0.0),
+
+        // Front Right drive (Motor ID 3)
+        new Slot0Configs()
+            .withKS(0.16762).withKV(0.11892).withKA(0.011316)
+            .withKP(0.16699).withKI(0.0).withKD(0.0),
+
+        // Back Left drive (Motor ID 10)
+        new Slot0Configs()
+            .withKS(0.14647).withKV(0.12332).withKA(0.014258)
+            .withKP(0.18196).withKI(0.0).withKD(0.0),
+
+        // Back Right drive (Motor ID 1)
+        new Slot0Configs()
+            .withKS(0.18798).withKV(0.12071).withKA(0.012633)
+            .withKP(0.17457).withKI(0.0).withKD(0.0)
+    };
+
+    // --- Drive Rotation gains per module (PLACEHOLDERS). Replace with your rotate-mode numbers when available ---
+    private static final Slot0Configs[] driveRotationGains = new Slot0Configs[] {
+        // Front Left rotate (placeholder)
+        new Slot0Configs()
+            .withKS(0.0).withKV(0.0).withKA(0.0)
+            .withKP(0.0).withKI(0.0).withKD(0.0),
+
+        // Front Right rotate (placeholder)
+        new Slot0Configs()
+            .withKS(0.0).withKV(0.0).withKA(0.0)
+            .withKP(0.0).withKI(0.0).withKD(0.0),
+
+        // Back Left rotate (placeholder)
+        new Slot0Configs()
+            .withKS(0.0).withKV(0.0).withKA(0.0)
+            .withKP(0.0).withKI(0.0).withKD(0.0),
+
+        // Back Right rotate (placeholder)
+        new Slot0Configs()
+            .withKS(0.0).withKV(0.0).withKA(0.0)
+            .withKP(0.0).withKI(0.0).withKD(0.0)
+    };
+
+    // --- Steer gains per module (FL, FR, BL, BR) from your provided table ---
+    private static final Slot0Configs[] steerGainsByModule = new Slot0Configs[] {
+        // Front Left steer (Motor ID 4)
+        new Slot0Configs()
+            .withKS(0.18372).withKV(2.3007).withKA(0.099203)
+            .withKP(44.76).withKI(0.0).withKD(2.5436)
+            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign),
+
+        // Front Right steer (Motor ID 11)
+        new Slot0Configs()
+            .withKS(0.075647).withKV(2.2808).withKA(0.10837)
+            .withKP(48.63).withKI(0.0).withKD(3.0887)
+            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign),
+
+        // Back Left steer (Motor ID 2)
+        new Slot0Configs()
+            .withKS(0.13114).withKV(2.2923).withKA(0.084971)
+            .withKP(40.95).withKI(0.0).withKD(2.2742)
+            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign),
+
+        // Back Right steer (Motor ID 12)
+        new Slot0Configs()
+            .withKS(0.1832).withKV(2.3025).withKA(0.07945)
+            .withKP(40.246).withKI(0.0).withKD(2.1705)
+            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
+    };
+
+    // --- Factory creator (unchanged except we still supply generic defaults) ---
+    private static final Slot0Configs steerGains = steerGainsByModule[0]; // placeholder used by factory where single object required
+    private static final Slot0Configs driveGains = driveTranslationGains[0]; // default/placeholder
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -113,8 +177,8 @@ public class TunerConstants {
             .withSteerMotorGearRatio(kSteerGearRatio)
             .withCouplingGearRatio(kCoupleRatio)
             .withWheelRadius(kWheelRadius)
-            .withSteerMotorGains(steerGains)
-            .withDriveMotorGains(driveGains)
+            .withSteerMotorGains(steerGains) // factory still needs a single steerGains object; actual per-module slots are loaded below
+            .withDriveMotorGains(driveGains) // factory still needs a single driveGains object; actual per-module slots are loaded below
             .withSteerMotorClosedLoopOutput(kSteerClosedLoopOutput)
             .withDriveMotorClosedLoopOutput(kDriveClosedLoopOutput)
             .withSlipCurrent(kSlipCurrent)
@@ -202,11 +266,25 @@ public class TunerConstants {
      * This should only be called once in your robot program,.
      */
     public static CommandSwerveDrivetrain createDrivetrain() {
-        return new CommandSwerveDrivetrain(
+        
+        FrontLeft.withSteerMotorGains(steerGainsByModule[0]);
+        FrontLeft.withDriveMotorGains(driveTranslationGains[0]);
+        
+        FrontRight.withSteerMotorGains(steerGainsByModule[1]);
+        FrontRight.withDriveMotorGains(driveTranslationGains[1]);
+        
+        BackLeft.withSteerMotorGains(steerGainsByModule[2]);
+        BackLeft.withDriveMotorGains(driveTranslationGains[2]);
+        
+        BackRight.withSteerMotorGains(steerGainsByModule[3]);
+        BackRight.withDriveMotorGains(driveTranslationGains[3]);
+        
+        CommandSwerveDrivetrain theDriveTrain = new 
+         CommandSwerveDrivetrain(
             DrivetrainConstants, FrontLeft, FrontRight, BackLeft, BackRight
         );
+        return theDriveTrain;
     }
-
 
     /**
      * Swerve Drive class utilizing CTR Electronics' Phoenix 6 API with the selected device types.
