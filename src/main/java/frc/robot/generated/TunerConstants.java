@@ -72,36 +72,73 @@ public class TunerConstants {
             .withKP(0.0).withKI(0.0).withKD(0.0)
     };
 
-    // --- Steer gains per module (FL, FR, BL, BR) from your provided table ---
-    private static final Slot0Configs[] steerGainsByModule = new Slot0Configs[] {
-        // Front Left steer (Motor ID 4)
-        new Slot0Configs()
-            .withKS(0.18372).withKV(2.3007).withKA(0.099203)
-            .withKP(44.76).withKI(0.0).withKD(2.5436)
-            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign),
+    // Steer Gains for Steer Motors
+    private static final Slot0Configs Slot0Configs_FrontLeftSteer = new Slot0Configs()
+        .withKS(0.18372).withKV(2.3007).withKA(0.099203)
+        .withKP(44.76).withKI(0.0).withKD(2.5436)
+        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
-        // Front Right steer (Motor ID 11)
-        new Slot0Configs()
-            .withKS(0.075647).withKV(2.2808).withKA(0.10837)
-            .withKP(48.63).withKI(0.0).withKD(3.0887)
-            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign),
+    private static final Slot0Configs Slot0Configs_FrontRightSteer = new Slot0Configs()
+        .withKS(0.075647).withKV(2.2808).withKA(0.10837)
+        .withKP(48.63).withKI(0.0).withKD(3.0887)
+        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
-        // Back Left steer (Motor ID 2)
-        new Slot0Configs()
-            .withKS(0.13114).withKV(2.2923).withKA(0.084971)
-            .withKP(40.95).withKI(0.0).withKD(2.2742)
-            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign),
+    private static final Slot0Configs Slot0Configs_BackLeftSteer = new Slot0Configs()
+        .withKS(0.13114).withKV(2.2923).withKA(0.084971)
+        .withKP(40.95).withKI(0.0).withKD(2.2742)
+        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
-        // Back Right steer (Motor ID 12)
-        new Slot0Configs()
-            .withKS(0.1832).withKV(2.3025).withKA(0.07945)
-            .withKP(40.246).withKI(0.0).withKD(2.1705)
-            .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
-    };
+    private static final Slot0Configs Slot0Configs_BackRighttSteer = new Slot0Configs()
+        .withKS(0.1832).withKV(2.3025).withKA(0.07945)
+        .withKP(40.246).withKI(0.0).withKD(2.1705)
+        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
+    // Translation Gains for Drive Motors
+    private static final Slot1Configs Slot1Configs_FrontLeftTranslation = new Slot1Configs()
+        .withKS(0.18372).withKV(2.3007).withKA(0.099203)
+        .withKP(44.76).withKI(0.0).withKD(2.5436)
+        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
+    private static final Slot1Configs Slot1Configs_FrontRightTranslation = new Slot1Configs()
+        .withKS(0.075647).withKV(2.2808).withKA(0.10837)
+        .withKP(48.63).withKI(0.0).withKD(3.0887)
+        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
+    private static final Slot1Configs Slot1Configs_BackLeftTranslation = new Slot1Configs()
+        .withKS(0.13114).withKV(2.2923).withKA(0.084971)
+        .withKP(40.95).withKI(0.0).withKD(2.2742)
+        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
+    private static final Slot1Configs Slot1Configs_BackRighttTranslation = new Slot1Configs()
+        .withKS(0.1832).withKV(2.3025).withKA(0.07945)
+        .withKP(40.246).withKI(0.0).withKD(2.1705)
+        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
+    // Rotation Gains for Drive Motors
+    private static final Slot2Configs Slot2Configs_FrontLeftRotation = new Slot2Configs()
+        .withKS(0.18372).withKV(2.3007).withKA(0.099203)
+        .withKP(44.76).withKI(0.0).withKD(2.5436)
+        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
+    private static final Slot2Configs Slot2Configs_FrontRightRotation = new Slot2Configs()
+        .withKS(0.075647).withKV(2.2808).withKA(0.10837)
+        .withKP(48.63).withKI(0.0).withKD(3.0887)
+        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
+    private static final Slot2Configs Slot2Configs_BackLeftRotation = new Slot2Configs()
+        .withKS(0.13114).withKV(2.2923).withKA(0.084971)
+        .withKP(40.95).withKI(0.0).withKD(2.2742)
+        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
+    private static final Slot2Configs Slot2Configs_BackRighttRotation = new Slot2Configs()
+        .withKS(0.1832).withKV(2.3025).withKA(0.07945)
+        .withKP(40.246).withKI(0.0).withKD(2.1705)
+        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
 
     // --- Factory creator (unchanged except we still supply generic defaults) ---
-    private static final Slot0Configs steerGains = steerGainsByModule[0]; // placeholder used by factory where single object required
-    private static final Slot0Configs driveGains = driveTranslationGains[0]; // default/placeholder
+    private static final Slot0Configs steerGains = Slot0Configs_FrontLeftSteer; // placeholder used by factory where single object required
+    private static final Slot0Configs driveGains = driveTranslationGains[1]; // default/placeholder.  Factory designed to only use Slot 0. We are trying to do better, use all 3 slots.
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -267,23 +304,50 @@ public class TunerConstants {
      */
     public static CommandSwerveDrivetrain createDrivetrain() {
         
-        FrontLeft.withSteerMotorGains(steerGainsByModule[0]);
-        FrontLeft.withDriveMotorGains(driveTranslationGains[0]);
-        
-        FrontRight.withSteerMotorGains(steerGainsByModule[1]);
-        FrontRight.withDriveMotorGains(driveTranslationGains[1]);
-        
-        BackLeft.withSteerMotorGains(steerGainsByModule[2]);
-        BackLeft.withDriveMotorGains(driveTranslationGains[2]);
-        
-        BackRight.withSteerMotorGains(steerGainsByModule[3]);
-        BackRight.withDriveMotorGains(driveTranslationGains[3]);
-        
         CommandSwerveDrivetrain theDriveTrain = new 
          CommandSwerveDrivetrain(
             DrivetrainConstants, FrontLeft, FrontRight, BackLeft, BackRight
         );
+
+        // Front Left
+        theDriveTrain.getModule(0).getSteerMotor().getConfigurator().apply(Slot0Configs_FrontLeftSteer);
+        theDriveTrain.getModule(0).getDriveMotor().getConfigurator().apply(Slot1Configs_FrontLeftTranslation);
+        theDriveTrain.getModule(0).getDriveMotor().getConfigurator().apply(Slot2Configs_FrontLeftRotation);
+
+        // Front Right
+        theDriveTrain.getModule(1).getSteerMotor().getConfigurator().apply(Slot0Configs_FrontRightSteer);
+        theDriveTrain.getModule(1).getDriveMotor().getConfigurator().apply(Slot1Configs_FrontRightTranslation);
+        theDriveTrain.getModule(1).getDriveMotor().getConfigurator().apply(Slot2Configs_FrontRightRotation);
+
+        // Back Left
+        theDriveTrain.getModule(2).getSteerMotor().getConfigurator().apply(Slot0Configs_BackLeftSteer);
+        theDriveTrain.getModule(2).getDriveMotor().getConfigurator().apply(Slot1Configs_BackLeftTranslation);
+        theDriveTrain.getModule(2).getDriveMotor().getConfigurator().apply(Slot2Configs_BackLeftRotation);
+
+        // Back Right
+        theDriveTrain.getModule(3).getSteerMotor().getConfigurator().apply(Slot0Configs_BackRighttSteer);
+        theDriveTrain.getModule(3).getDriveMotor().getConfigurator().apply(Slot1Configs_BackRighttTranslation);
+        theDriveTrain.getModule(3).getDriveMotor().getConfigurator().apply(Slot2Configs_BackRighttRotation);
+
+        // Select the Slot to be active
+        theDriveTrain.getModule(0).getSteerMotor().getConfigurator().apply(Slot0Configs_BackLeftSteer);
+        setDefaultSlotOnAllDrivetrainMotors(theDriveTrain, true);
+
         return theDriveTrain;
+    }
+
+    public static void setDefaultSlotOnAllDrivetrainMotors(CommandSwerveDrivetrain theCommandSwerveDrivetrain, boolean bTranslateNotRotate) {
+        if (bTranslateNotRotate){
+            theCommandSwerveDrivetrain.getModule(0).getDriveMotor().getConfigurator().apply(Slot1Configs_FrontLeftTranslation);  // think this is incorrect.  Shoud call motor.getControl().setDefaultClosedLoopSlot(1) but it don't exist for TalonFX class.
+            theCommandSwerveDrivetrain.getModule(1).getDriveMotor().getConfigurator().apply(Slot1Configs_FrontRightTranslation);
+            theCommandSwerveDrivetrain.getModule(2).getDriveMotor().getConfigurator().apply(Slot1Configs_BackLeftTranslation);
+            theCommandSwerveDrivetrain.getModule(3).getDriveMotor().getConfigurator().apply(Slot1Configs_BackRighttTranslation);
+        } else {
+            theCommandSwerveDrivetrain.getModule(0).getDriveMotor().getConfigurator().apply(Slot2Configs_FrontLeftRotation);
+            theCommandSwerveDrivetrain.getModule(1).getDriveMotor().getConfigurator().apply(Slot2Configs_FrontRightRotation);
+            theCommandSwerveDrivetrain.getModule(2).getDriveMotor().getConfigurator().apply(Slot2Configs_BackLeftRotation);
+            theCommandSwerveDrivetrain.getModule(3).getDriveMotor().getConfigurator().apply(Slot2Configs_BackRighttRotation);
+        }
     }
 
     /**
