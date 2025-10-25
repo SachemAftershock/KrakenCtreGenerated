@@ -27,7 +27,7 @@ public class TunerConstants {
     // Slot 2 -> Drive Rotation gains (PLACEHOLDERS)
 
     // --- Drive Translation gains per module (FL, FR, BL, BR) from your provided table ---
-    private static final Slot0Configs[] driveTranslationGains = new Slot0Configs[] {
+    private static final Slot0Configs[] driveTranslationGains = new Slot0Configs[] {  // Factory prevents correct use of Slot1Configs
         // Front Left drive (Motor ID 9)
         new Slot0Configs()
             .withKS(0.13445).withKV(0.1255).withKA(0.014277)
@@ -50,7 +50,7 @@ public class TunerConstants {
     };
 
     // --- Drive Rotation gains per module (PLACEHOLDERS). Replace with your rotate-mode numbers when available ---
-    private static final Slot0Configs[] driveRotationGains = new Slot0Configs[] {
+    private static final Slot0Configs[] driveRotationGains = new Slot0Configs[] {  // Factory prevents correct use of Slot2Configs
         // Front Left rotate (placeholder)
         new Slot0Configs()
             .withKS(0.0).withKV(0.0).withKA(0.0)
@@ -267,6 +267,10 @@ public class TunerConstants {
      */
     public static CommandSwerveDrivetrain createDrivetrain() {
         
+        // Although we should be using SLots 0..2 and be able to change 1 & 2 dynamically (rotate when not translating), 
+        // because the factory is black box and insists on use using only slot 0 we are not sure its possible to do so, 
+        // so we just stuff steer and translate into the factory as its aregument list requires.
+
         CommandSwerveDrivetrain theDriveTrain = new 
          CommandSwerveDrivetrain(
             DrivetrainConstants, 
