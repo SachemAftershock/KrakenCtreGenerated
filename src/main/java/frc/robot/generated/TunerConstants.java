@@ -267,21 +267,13 @@ public class TunerConstants {
      */
     public static CommandSwerveDrivetrain createDrivetrain() {
         
-        FrontLeft.withSteerMotorGains(steerGainsByModule[0]);
-        FrontLeft.withDriveMotorGains(driveTranslationGains[0]);
-        
-        FrontRight.withSteerMotorGains(steerGainsByModule[1]);
-        FrontRight.withDriveMotorGains(driveTranslationGains[1]);
-        
-        BackLeft.withSteerMotorGains(steerGainsByModule[2]);
-        BackLeft.withDriveMotorGains(driveTranslationGains[2]);
-        
-        BackRight.withSteerMotorGains(steerGainsByModule[3]);
-        BackRight.withDriveMotorGains(driveTranslationGains[3]);
-        
         CommandSwerveDrivetrain theDriveTrain = new 
          CommandSwerveDrivetrain(
-            DrivetrainConstants, FrontLeft, FrontRight, BackLeft, BackRight
+            DrivetrainConstants, 
+            FrontLeft.withSteerMotorGains(steerGainsByModule[0]).withDriveMotorGains(driveTranslationGains[0]), 
+            FrontRight.withSteerMotorGains(steerGainsByModule[1]).withDriveMotorGains(driveTranslationGains[1]), 
+            BackLeft.withSteerMotorGains(steerGainsByModule[2]).withDriveMotorGains(driveTranslationGains[2]), 
+            BackRight.withSteerMotorGains(steerGainsByModule[3]).withDriveMotorGains(driveTranslationGains[3])
         );
         return theDriveTrain;
     }
