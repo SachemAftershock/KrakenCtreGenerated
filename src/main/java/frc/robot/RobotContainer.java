@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -57,10 +58,11 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    private final PathPlannerAuto AutoTest = new PathPlannerAuto("test_auto_1");
+    
     public RobotContainer() {
         configureBindings();
     }
-
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
@@ -75,7 +77,9 @@ public class RobotContainer {
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
-
+        
+        drivetrain.getKinematics().toChassisSpeeds();
+        
         primaryController.a().whileTrue(drivetrain.applyRequest(() -> brake));
         primaryController.b().whileTrue(drivetrain.applyRequest(() -> point
                 .withModuleDirection(new Rotation2d(-primaryController.getLeftY(), -primaryController.getLeftX()))));
@@ -120,6 +124,6 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return AutoTest;
     }
 }
