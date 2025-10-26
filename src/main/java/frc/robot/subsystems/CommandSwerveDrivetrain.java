@@ -57,8 +57,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     private final SwerveRequest.RobotCentric PathPlannerRequest = new SwerveRequest.RobotCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+        .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -145,12 +144,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             SwerveModuleConstants<?, ?, ?>... modules) {          
         super(drivetrainConstants, modules);
         
-                
         // Init AutoBuilder
         RobotConfig config;
         try {
             config = RobotConfig.fromGUISettings();
         } catch (Exception e) {
+            System.out.println("IT BROKE :(");
             config = null;
             e.printStackTrace();
         }
@@ -159,9 +158,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             () -> this.getStateCopy().Pose,
             this::resetPose,
             () -> this.getStateCopy().Speeds,
-            (speeds, feedforward) -> applyRequest(() -> PathPlannerRequest
-                .withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond)
-                .withRotationalRate(speeds.omegaRadiansPerSecond)),
+            (speeds, feedforward) -> {
+                SmartDashboard.putNumber("x", speeds.vxMetersPerSecond);
+                SmartDashboard.putNumber("y", speeds.vyMetersPerSecond);
+                SmartDashboard.putNumber("w", speeds.omegaRadiansPerSecond);                
+                this.setControl(PathPlannerRequest.withVelocityX(speeds.vxMetersPerSecond)
+                .withVelocityY(speeds.vyMetersPerSecond).withRotationalRate(speeds.omegaRadiansPerSecond));
+            },
             new PPHolonomicDriveController(
                 new PIDConstants(3.0, 0.0, 0.0),
                 new PIDConstants(3.0, 0.0, 0.0)
@@ -177,6 +180,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             this
         );
 
+        // SmartDashboard.putData("Swerve Drive", new Sendable() {
+        //     @Override    
+        //     public void initSendable(SendableBuilder builder) {
+        //         builder.setSmartDashboardType("SwerveDrive");
+
+        //         builder.addDoubleProperty("Front Left Angle", () -> getStateCopy().ModuleStates[0].angle, null);
+        //         builder.addDoubleProperty("Front Right Angle", () -> getStateCopy().ModuleStates[1].angle, null);
+        //         builder.addDoubleProperty("Back Left Angle", () -> getStateCopy().ModuleStates[2].angle, null);
+        //         builder.addDoubleProperty("Back Right Angle", () -> getStateCopy().ModuleStates[3].angle, null);
+
+        //         builder.addDoubleProperty("Front Left Velocity", () -> getStateCopy().ModuleStates[0].speedMetersPerSecond, null);
+        //         builder.addDoubleProperty("Front Right Velocity", () -> getStateCopy().ModuleStates[1].speedMetersPerSecond, null);
+        //         builder.addDoubleProperty("Back Left Velocity", () -> getStateCopy().ModuleStates[2].speedMetersPerSecond, null);
+        //         builder.addDoubleProperty("Back Right Velocity", () -> getStateCopy().ModuleStates[3].speedMetersPerSecond, null);
+        //     }
+        // });
+        
         if (Utils.isSimulation()) {
             startSimThread();
         }

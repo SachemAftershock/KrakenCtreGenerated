@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -33,10 +34,12 @@ import frc.robot.commands.AlgaePush.PushInCommand;
 import frc.robot.commands.AlgaePush.PushOutCommand;
 import frc.robot.commands.Auto.MoveToPoseCommand;
 
-public class RobotContainer {
+    public class RobotContainer {
     private ElevatorSubsystem mElevatorSubsystem = ElevatorSubsystem.getInstance();
     private AlgaePushSubsystem mAlgaePushSubsystem = AlgaePushSubsystem.getInstance();
 
+    private Command goToL2 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2);
+    
     // kSpeedAt12Volts desired top speed
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     // 3/4 of a rotation per second max angular velocity
@@ -48,6 +51,7 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    private final SwerveRequest.Idle idle = new SwerveRequest.Idle();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -61,6 +65,8 @@ public class RobotContainer {
     private final PathPlannerAuto AutoTest = new PathPlannerAuto("test_auto_1");
     
     public RobotContainer() {
+        NamedCommands.registerCommand("L2", goToL2);
+    
         configureBindings();
     }
 
@@ -74,11 +80,8 @@ public class RobotContainer {
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
-        final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
-        
-        drivetrain.getKinematics().toChassisSpeeds();
         
         primaryController.a().whileTrue(drivetrain.applyRequest(() -> brake));
         primaryController.b().whileTrue(drivetrain.applyRequest(() -> point
@@ -86,10 +89,10 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        primaryController.back().and(primaryController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        primaryController.back().and(primaryController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        primaryController.start().and(primaryController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        primaryController.start().and(primaryController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // primaryController.back().and(primaryController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // primaryController.back().and(primaryController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // primaryController.start().and(primaryController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // primaryController.start().and(primaryController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
         primaryController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -124,6 +127,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
+        System.out.println("why");
         return AutoTest;
     }
 }
