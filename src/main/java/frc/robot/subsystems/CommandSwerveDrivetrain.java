@@ -25,6 +25,8 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.MomentOfInertiaUnit;
 import edu.wpi.first.units.measure.MomentOfInertia;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -57,7 +59,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     private final SwerveRequest.RobotCentric PathPlannerRequest = new SwerveRequest.RobotCentric()
-        .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -180,22 +182,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             this
         );
 
-        // SmartDashboard.putData("Swerve Drive", new Sendable() {
-        //     @Override    
-        //     public void initSendable(SendableBuilder builder) {
-        //         builder.setSmartDashboardType("SwerveDrive");
+        SmartDashboard.putData("Swerve Drive", new Sendable() {
+            @Override 
+            public void initSendable(SendableBuilder builder) 
+            {
+                builder.setSmartDashboardType("SwerveDrive");
 
-        //         builder.addDoubleProperty("Front Left Angle", () -> getStateCopy().ModuleStates[0].angle, null);
-        //         builder.addDoubleProperty("Front Right Angle", () -> getStateCopy().ModuleStates[1].angle, null);
-        //         builder.addDoubleProperty("Back Left Angle", () -> getStateCopy().ModuleStates[2].angle, null);
-        //         builder.addDoubleProperty("Back Right Angle", () -> getStateCopy().ModuleStates[3].angle, null);
+                builder.addDoubleProperty("Front Left Angle", () -> getStateCopy().ModuleStates[0].angle.getRadians(), null);
+                builder.addDoubleProperty("Front Right Angle", () -> getStateCopy().ModuleStates[1].angle.getRadians(), null);
+                builder.addDoubleProperty("Back Left Angle", () -> getStateCopy().ModuleStates[2].angle.getRadians(), null);
+                builder.addDoubleProperty("Back Right Angle", () -> getStateCopy().ModuleStates[3].angle.getRadians(), null);
 
-        //         builder.addDoubleProperty("Front Left Velocity", () -> getStateCopy().ModuleStates[0].speedMetersPerSecond, null);
-        //         builder.addDoubleProperty("Front Right Velocity", () -> getStateCopy().ModuleStates[1].speedMetersPerSecond, null);
-        //         builder.addDoubleProperty("Back Left Velocity", () -> getStateCopy().ModuleStates[2].speedMetersPerSecond, null);
-        //         builder.addDoubleProperty("Back Right Velocity", () -> getStateCopy().ModuleStates[3].speedMetersPerSecond, null);
-        //     }
-        // });
+                builder.addDoubleProperty("Front Left Velocity", () -> getStateCopy().ModuleStates[0].speedMetersPerSecond, null);
+                builder.addDoubleProperty("Front Right Velocity", () -> getStateCopy().ModuleStates[1].speedMetersPerSecond, null);
+                builder.addDoubleProperty("Back Left Velocity", () -> getStateCopy().ModuleStates[2].speedMetersPerSecond, null);
+                builder.addDoubleProperty("Back Right Velocity", () -> getStateCopy().ModuleStates[3].speedMetersPerSecond, null);
+            
+                builder.addDoubleProperty("Robot Angle", () -> getStateCopy().RawHeading.getRadians(), null);
+            }
+        });
         
         if (Utils.isSimulation()) {
             startSimThread();

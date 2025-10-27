@@ -37,8 +37,6 @@ import frc.robot.commands.Auto.MoveToPoseCommand;
     public class RobotContainer {
     private ElevatorSubsystem mElevatorSubsystem = ElevatorSubsystem.getInstance();
     private AlgaePushSubsystem mAlgaePushSubsystem = AlgaePushSubsystem.getInstance();
-
-    private Command goToL2 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2);
     
     // kSpeedAt12Volts desired top speed
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -47,7 +45,7 @@ import frc.robot.commands.Auto.MoveToPoseCommand;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDeadband(MaxSpeed * 0.025).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -61,11 +59,13 @@ import frc.robot.commands.Auto.MoveToPoseCommand;
             OperatorConstants.kDriverControllerPort2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-
-    private final PathPlannerAuto AutoTest = new PathPlannerAuto("test_auto_1");
+    private final PathPlannerAuto AutoTest;
     
     public RobotContainer() {
+        
+        Command goToL2 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2);
         NamedCommands.registerCommand("L2", goToL2);
+        AutoTest = new PathPlannerAuto("test_auto_1");
     
         configureBindings();
     }
@@ -74,7 +74,8 @@ import frc.robot.commands.Auto.MoveToPoseCommand;
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
-                drivetrain.applyRequest(() -> drive.withVelocityX(primaryController.getLeftY() * MaxSpeed)
+                drivetrain.applyRequest(() -> 
+                drive.withVelocityX(primaryController.getLeftY() * MaxSpeed)
                         .withVelocityY(primaryController.getLeftX() * MaxSpeed)
                         .withRotationalRate(-primaryController.getRightX() * MaxAngularRate)));
 
