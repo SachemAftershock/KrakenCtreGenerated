@@ -71,10 +71,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("L2", goToL2);
         AutoTest = new PathPlannerAuto("test_auto_1");
 
-        Pose2d temp = null;
-        double timestamp = 10;
-        Matrix<N3, N1> visionMeasurementStdDevs;
-        drivetrain.addVisionMeasurement(temp, timestamp, visionMeasurementStdDevs);
         mVisionSubsystem.bindEstimateAcceptor(drivetrain::addVisionMeasurement);
 
         configureBindings();

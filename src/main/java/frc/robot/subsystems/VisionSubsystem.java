@@ -12,13 +12,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Robot;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 
 import static frc.robot.Constants.VisionConstants.kCameraNames;
 import static frc.robot.Constants.VisionConstants.kCameraTransforms;
 import static frc.robot.Constants.VisionConstants.kSingleTagStdDevs;
-import static frc.robot.Constants.VisionConstants.kMultiTagStdDevs;;
+import static frc.robot.Constants.VisionConstants.kMultiTagStdDevs;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +52,23 @@ public class VisionSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
+        Optional<EstimatedRobotPose> visionEst = Optional.empty();
+        for (int i = 0; i < kCameraNames.length; i++) {
+            for (var change : cameras[i].getAllUnreadResults()) {
+                visionEst = photonEstimators[i].update(change);
+                updateEstimationStdDevs(visionEst, change.getTargets(), i);
 
+                if (visionEst.isPresent()) {
+                    var est = visionEst.get();
+                    var estStdDevs = getEstimationStdDevs(i);
+                    estimateConsumer.accept(est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+                };
+            }
+        }
+    }
+
+    public Matrix<N3, N1> getEstimationStdDevs(int i) {
+        return curStdDevs.get(i);
     }
 
     private void updateEstimationStdDevs(
