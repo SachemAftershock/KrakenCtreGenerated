@@ -43,7 +43,7 @@ import frc.robot.commands.Auto.MoveToPoseCommand;
 
     private Command goToL2 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2);
 
-    private Command sequenceOuterBlueToReefJToHuCommand = new SequentialCommandGroup(
+    private Command sequenceBlue4CoralCommand = new SequentialCommandGroup(
         (new ParallelCommandGroup(
                 (new PathPlannerAuto("001.1_Blue_Outside_to_Reef_J")),
                 (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2))).andThen
@@ -91,7 +91,7 @@ import frc.robot.commands.Auto.MoveToPoseCommand;
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.025).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 10% deadband
+            .withDeadband(MaxSpeed * 0.025).withRotationalDeadband(MaxAngularRate * 0.05) // Add a deadband, keep it tight for precision control (no jerk)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -105,13 +105,13 @@ import frc.robot.commands.Auto.MoveToPoseCommand;
             OperatorConstants.kDriverControllerPort2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    private final PathPlannerAuto AutoTest;
+    //private final PathPlannerAuto AutoTest;
     
     public RobotContainer() {
         
-        Command goToL2 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2);
-        NamedCommands.registerCommand("L2", goToL2);
-        AutoTest = new PathPlannerAuto("test_auto_1");
+        // Command goToL2 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2);
+        // NamedCommands.registerCommand("L2", goToL2);
+        // AutoTest = new PathPlannerAuto("test_auto_1");
     
         configureBindings();
     }
@@ -174,7 +174,7 @@ import frc.robot.commands.Auto.MoveToPoseCommand;
     }
 
     public Command getAutonomousCommand() {
-        System.out.println("why");
-        return sequenceOuterBlueToReefJToHuCommand;
+        System.out.println("Setting Autonomous Command: " + sequenceBlue4CoralCommand.getName());
+        return sequenceBlue4CoralCommand;
     }
 }
