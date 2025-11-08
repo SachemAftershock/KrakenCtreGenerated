@@ -16,6 +16,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -28,6 +30,7 @@ import frc.robot.commands.Elevator.NudgeElevatorCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
+import frc.robot.commands.Auto.DelayCommand;
 import frc.robot.commands.Elevator.CoralGrappleCommand;
 import frc.robot.commands.Elevator.MoveToHeightCommand;
 import frc.robot.commands.AlgaePush.PushInCommand;
@@ -39,7 +42,48 @@ import frc.robot.commands.Auto.MoveToPoseCommand;
     private AlgaePushSubsystem mAlgaePushSubsystem = AlgaePushSubsystem.getInstance();
 
     private Command goToL2 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2);
-    
+
+    private Command sequenceOuterBlueToReefJToHuCommand = new SequentialCommandGroup(
+        (new ParallelCommandGroup(
+                (new PathPlannerAuto("001.1_Blue_Outside_to_Reef_J")),
+                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2))).andThen
+        (new DelayCommand(0.1)).andThen
+        (new CoralGrappleCommand(mElevatorSubsystem, false) ).andThen // eject Coral
+        (new DelayCommand(0.45)).andThen
+        (new ParallelCommandGroup(
+                (new PathPlannerAuto("001.2_Blue_Reef_J_to_Human_Player")),
+                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eReceive))
+                )).andThen
+        (new CoralGrappleCommand(mElevatorSubsystem, true)).andThen // intake Coral
+        (new ParallelCommandGroup(
+                (new PathPlannerAuto("001.3_Human_Player_to_Blue_Reef_J")),
+                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL1))
+                )).andThen
+        (new CoralGrappleCommand(mElevatorSubsystem, false))).andThen // eject Coral
+        (new DelayCommand(0.45)).andThen
+        (new ParallelCommandGroup(
+                (new PathPlannerAuto("001.2_Blue_Reef_J_to_Human_Player")),
+                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eReceive))
+                )).andThen
+        (new CoralGrappleCommand(mElevatorSubsystem, true)).andThen // intake Coral
+        (new ParallelCommandGroup(
+                (new PathPlannerAuto("001.4_Human_Player_to_Blue_Reef_I")),
+                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2))
+                )).andThen
+        (new CoralGrappleCommand(mElevatorSubsystem, false)).andThen // eject Coral
+        (new DelayCommand(0.45)).andThen
+        (new ParallelCommandGroup(
+                (new PathPlannerAuto("001.5_Blue_Reef_I_to_Human_Player")),
+                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eReceive))
+                )).andThen
+        (new CoralGrappleCommand(mElevatorSubsystem, true)).andThen // intake Coral
+        (new ParallelCommandGroup(
+                (new PathPlannerAuto("001.4_Human_Player_to_Blue_Reef_I")),
+                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL1))
+                )).andThen
+        (new CoralGrappleCommand(mElevatorSubsystem, false)) // eject Coral
+        ); 
+
     // kSpeedAt12Volts desired top speed
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     // 3/4 of a rotation per second max angular velocity
@@ -128,6 +172,6 @@ import frc.robot.commands.Auto.MoveToPoseCommand;
 
     public Command getAutonomousCommand() {
         System.out.println("why");
-        return AutoTest;
+        return sequenceOuterBlueToReefJToHuCommand;
     }
 }
