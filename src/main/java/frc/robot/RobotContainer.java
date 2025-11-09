@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -41,8 +43,13 @@ import frc.robot.commands.Auto.MoveToPoseCommand;
     private ElevatorSubsystem mElevatorSubsystem = ElevatorSubsystem.getInstance();
     private AlgaePushSubsystem mAlgaePushSubsystem = AlgaePushSubsystem.getInstance();
 
-    private Command goToL2 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2);
-
+    private Command elevator_L1 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL1);
+    private Command elevator_L2 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2);
+    private Command elevator_Receive = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eReceive);
+    private Command elevator_Stowed = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eStowed);
+    private Command coral_Eject = new CoralGrappleCommand(mElevatorSubsystem, false);
+    private Command coral_Receive = new CoralGrappleCommand(mElevatorSubsystem, true);
+    
     private Command sequenceBlue4CoralCommand = new SequentialCommandGroup(
         (new ParallelCommandGroup(
                 (new PathPlannerAuto("001.1_Blue_Outside_to_Reef_J")),
@@ -107,11 +114,21 @@ import frc.robot.commands.Auto.MoveToPoseCommand;
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     //private final PathPlannerAuto AutoTest;
     
+    private final Command Auto_001_Blue_Outside_Coral_J2J1I2I1;
+
     public RobotContainer() {
         
         // Command goToL2 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2);
         // NamedCommands.registerCommand("L2", goToL2);
         // AutoTest = new PathPlannerAuto("test_auto_1");
+
+        NamedCommands.registerCommand("elevator_L1", elevator_L1);
+        NamedCommands.registerCommand("elevator_L2", elevator_L2);
+        NamedCommands.registerCommand("elevator_Receive", elevator_Receive);
+        NamedCommands.registerCommand("elevator_Stowed", elevator_Stowed);
+        NamedCommands.registerCommand("coral_Eject", coral_Eject);
+        NamedCommands.registerCommand("coral_Receive", coral_Receive);
+        Auto_001_Blue_Outside_Coral_J2J1I2I1 = new PathPlannerAuto("Auto_001_Blue_Outside_Coral_J2J1I2I1");
     
         configureBindings();
     }
@@ -175,6 +192,7 @@ import frc.robot.commands.Auto.MoveToPoseCommand;
 
     public Command getAutonomousCommand() {
         System.out.println("Setting Autonomous Command: " + sequenceBlue4CoralCommand.getName());
-        return sequenceBlue4CoralCommand;
+        //return sequenceBlue4CoralCommand;
+        return Auto_001_Blue_Outside_Coral_J2J1I2I1;
     }
 }

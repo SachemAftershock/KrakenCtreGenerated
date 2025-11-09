@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.547970779220779,
-        "y": 7.234902597402598
+        "x": 1.553,
+        "y": 7.278
       },
       "prevControl": {
-        "x": 3.04466264757185,
-        "y": 5.958320542269029
+        "x": 3.049565451729717,
+        "y": 6.00152796791742
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 128.9410122760217
+    "rotation": 126.697777163815
   },
   "reversed": false,
-  "folder": null,
+  "folder": "001_Blue_Outside_Coral_J2J1I2I1",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -119.57783868126143

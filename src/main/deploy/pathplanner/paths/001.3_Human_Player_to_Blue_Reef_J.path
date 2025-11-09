@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5527191558441558,
-        "y": 7.277637987012987
+        "x": 1.553,
+        "y": 7.278
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.678084415584415,
-        "y": 6.769561688311687
+        "x": 2.6786007861918053,
+        "y": 6.769819057692645
       },
       "isLocked": false,
       "linkedName": null
@@ -45,7 +45,7 @@
     "rotation": -120.72469347079064
   },
   "reversed": false,
-  "folder": null,
+  "folder": "001_Blue_Outside_Coral_J2J1I2I1",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 127.81573260757315
