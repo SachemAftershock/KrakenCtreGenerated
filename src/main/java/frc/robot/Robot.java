@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
@@ -26,6 +27,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
+        //PathPlanner Docs 2025 - https://pathplanner.dev/pplib-pathfinding.html#advantagekit-compatibility
+        //If using AdvantageKit, pathfinding will not be compatible with log replay 
+        //unless you use the provided AdvantageKit compatible pathfinder implementation. 
+        //Add this class to your robot code project, then make the following code change
+        //Pathfinding.setPathfinder(new LocalADStarAK());
+
         CameraServer.startAutomaticCapture();
         CanBridge.runTCP();
     }
