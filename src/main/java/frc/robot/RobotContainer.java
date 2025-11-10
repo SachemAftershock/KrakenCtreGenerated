@@ -4,43 +4,44 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.ctre.phoenix6.swerve.SwerveRequest;
-
+import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.AlgaePushSubsystem;
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.enums.ElevatorPosEnum;
-import frc.robot.commands.Elevator.NudgeElevatorCommand;
-import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-
-import frc.robot.commands.Auto.DelayCommand;
-import frc.robot.commands.Elevator.CoralGrappleCommand;
-import frc.robot.commands.Elevator.MoveToHeightCommand;
+import frc.lib.AftershockCommandXboxController;
 import frc.robot.commands.AlgaePush.PushInCommand;
 import frc.robot.commands.AlgaePush.PushOutCommand;
+import frc.robot.commands.Auto.DelayCommand;
 import frc.robot.commands.Auto.MoveToPoseCommand;
+import frc.robot.commands.Elevator.CoralGrappleCommand;
+import frc.robot.commands.Elevator.MoveToHeightCommand;
+import frc.robot.commands.Elevator.NudgeElevatorCommand;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.enums.ElevatorPosEnum;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.AlgaePushSubsystem;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ElevatorSubsystem;
+import static edu.wpi.first.units.Units.*;
 
 public class RobotContainer {
 
@@ -48,7 +49,7 @@ public class RobotContainer {
 
     private ElevatorSubsystem mElevatorSubsystem = ElevatorSubsystem.getInstance();
     private AlgaePushSubsystem mAlgaePushSubsystem = AlgaePushSubsystem.getInstance();
-
+    
     private Command elevator_L1 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL1);
     private Command elevator_L2 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2);
     private Command elevator_Receive = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eReceive);
@@ -112,9 +113,9 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController primaryController = new CommandXboxController(
+    private final AftershockCommandXboxController primaryController = new AftershockCommandXboxController(
             OperatorConstants.kDriverControllerPort1);
-    private final CommandXboxController secondaryController = new CommandXboxController(
+    private final AftershockCommandXboxController secondaryController = new AftershockCommandXboxController(
             OperatorConstants.kDriverControllerPort2);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -177,6 +178,18 @@ public class RobotContainer {
 
         primaryController.leftTrigger().whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(1.0, 1.0, new Rotation2d(45)), false));
         primaryController.rightTrigger().whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(0.0, 0.0, new Rotation2d(0)), true));
+
+        Trigger ElevatorUpDPad = new Trigger (() -> primaryController.getDPadDown());
+        ElevatorUpDPad.whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(0)), true));
+
+        Trigger ElevatorDownDPad = new Trigger (() -> primaryController.getDPadDown());
+        ElevatorDownDPad.whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(180)), true));
+
+        Trigger ElevatorLeftDPad = new Trigger (() -> primaryController.getDPadDown());
+        ElevatorLeftDPad.whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(90)), true));
+
+        Trigger ElevatorRightDPad = new Trigger (() -> primaryController.getDPadDown());
+        ElevatorRightDPad.whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(-90)), true));
 
         /*
          * Secondary Controller Commands
