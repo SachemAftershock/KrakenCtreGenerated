@@ -3,7 +3,8 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "001_Blue_Outside_Coral_J2J1I2I1"
+    "001_Blue_Outside_Coral_J2J1I2I1",
+    "002_Blue_JI_Stage"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.0,

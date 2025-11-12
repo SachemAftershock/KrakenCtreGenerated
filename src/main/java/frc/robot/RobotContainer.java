@@ -9,6 +9,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.commands.PathfindThenFollowPath;
 import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -16,6 +17,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
@@ -98,6 +100,19 @@ public class RobotContainer {
         (new CoralGrappleCommand(mElevatorSubsystem, false)) // eject Coral
         ); 
 
+    // Create the constraints to use while pathfinding. The constraints defined in the path will only be used for the path.
+    private PathConstraints constraints_PathFinder = new PathConstraints(
+        3.0, 4.0,
+        Units.degreesToRadians(540), Units.degreesToRadians(720));
+
+    // Load the path we want to pathfind to and follow
+    private PathPlannerPath path_StageJI_to_J;
+    private PathPlannerPath path_StageJI_to_I;
+
+    // Since AutoBuilder is configured, we can use it to build pathfinding commands
+    private Command pathfindingCommand_Anywhere_to_J;
+    private Command pathfindingCommand_Anywhere_to_I;
+
     // kSpeedAt12Volts desired top speed
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     // 3/4 of a rotation per second max angular velocity
@@ -122,6 +137,7 @@ public class RobotContainer {
     //private final PathPlannerAuto AutoTest;
     
     private final Command Auto_001_Blue_Outside_Coral_J2J1I2I1;
+    private final Command Auto_002_Blue_Move_Somewhere;
 
     public RobotContainer() {
         
@@ -136,6 +152,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("coral_Eject", coral_Eject);
         NamedCommands.registerCommand("coral_Receive", coral_Receive);
         Auto_001_Blue_Outside_Coral_J2J1I2I1 = new PathPlannerAuto("Auto_001_Blue_Outside_Coral_J2J1I2I1");
+        Auto_002_Blue_Move_Somewhere = new PathPlannerAuto("Auto_002_Blue_Move_Somewhere");
     
         configureBindings();
 
@@ -144,6 +161,28 @@ public class RobotContainer {
         // Another option that allows you to specify the default auto by its name
         // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
         SmartDashboard.putData("Auto Chooser", autoChooser);
+
+        String pathFile_To_J = "JI_Stage_to_J";
+        try {
+                path_StageJI_to_J = PathPlannerPath.fromPathFile(pathFile_To_J);
+                pathfindingCommand_Anywhere_to_J = AutoBuilder.pathfindThenFollowPath(path_StageJI_to_J, constraints_PathFinder);
+        } catch (Exception e) {
+                System.out.println("Path File not found or failed to build path: '" + pathFile_To_J + "'");
+                path_StageJI_to_J = null;
+                pathfindingCommand_Anywhere_to_J = null;
+                e.printStackTrace();
+        }
+
+        String pathFile_To_I = "JI_Stage_to_I";
+        try {
+                path_StageJI_to_I = PathPlannerPath.fromPathFile(pathFile_To_I);
+                pathfindingCommand_Anywhere_to_I = AutoBuilder.pathfindThenFollowPath(path_StageJI_to_I, constraints_PathFinder);
+        } catch (Exception e) {
+                System.out.println("Path File not found or failed to build path: '" + pathFile_To_I + "'");
+                path_StageJI_to_I = null;
+                pathfindingCommand_Anywhere_to_I = null;
+                e.printStackTrace();
+        }
     }
 
     private void configureBindings() {
@@ -179,17 +218,33 @@ public class RobotContainer {
         primaryController.leftTrigger().whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(1.0, 1.0, new Rotation2d(45)), false));
         primaryController.rightTrigger().whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(0.0, 0.0, new Rotation2d(0)), true));
 
-        Trigger ElevatorUpDPad = new Trigger (() -> primaryController.getDPadDown());
-        ElevatorUpDPad.whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(0)), true));
+        if (pathfindingCommand_Anywhere_to_J != null) {
+                primaryController.povLeft().whileTrue(pathfindingCommand_Anywhere_to_J);
+        }
 
-        Trigger ElevatorDownDPad = new Trigger (() -> primaryController.getDPadDown());
-        ElevatorDownDPad.whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(180)), true));
+        if (pathfindingCommand_Anywhere_to_I != null) {
+                primaryController.povRight().whileTrue(pathfindingCommand_Anywhere_to_I);
+        }
 
-        Trigger ElevatorLeftDPad = new Trigger (() -> primaryController.getDPadDown());
-        ElevatorLeftDPad.whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(90)), true));
+        // Aim down field towards opposing alliance.  Stay at same field coordinate. 
+        primaryController.povUp().whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(0)), true));
+        
+        // Aim towards own alliance direction.  Stay at same field coordinate. 
+        primaryController.povDown().whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(180)), true));
 
-        Trigger ElevatorRightDPad = new Trigger (() -> primaryController.getDPadDown());
-        ElevatorRightDPad.whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(-90)), true));
+
+// This was unneccessary, see secondary controller does it already.  May not need aftershockXboxController.  Remove it if not. 
+        // Trigger ElevatorUpDPad = new Trigger (() -> primaryController.getDPadDown());
+        // ElevatorUpDPad.whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(0)), true));
+
+        // Trigger ElevatorDownDPad = new Trigger (() -> primaryController.getDPadDown());
+        // ElevatorDownDPad.whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(180)), true));
+
+        // Trigger ElevatorLeftDPad = new Trigger (() -> primaryController.getDPadDown());
+        // ElevatorLeftDPad.whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(90)), true));
+
+        // Trigger ElevatorRightDPad = new Trigger (() -> primaryController.getDPadDown());
+        // ElevatorRightDPad.whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(-90)), true));
 
         /*
          * Secondary Controller Commands
@@ -219,6 +274,7 @@ public class RobotContainer {
         System.out.println("Setting Autonomous Command: " + sequenceBlue4CoralCommand.getName());
         //return sequenceBlue4CoralCommand;
         return Auto_001_Blue_Outside_Coral_J2J1I2I1;
+        //return Auto_002_Blue_Move_Somewhere;
         //return autoChooser.getSelected();  // Use this one to list all the available autopaths in the deploy directory.
     }
 }

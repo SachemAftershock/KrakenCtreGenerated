@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.706361607142856,
+        "y": 5.9053571428571425
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.536607142857142,
+        "y": 5.5070870535714285
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.321149553571428,
+        "y": 5.082700892857143
+      },
+      "prevControl": {
+        "x": 5.438671875,
+        "y": 5.3308035714285715
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -118.53998518795991
+  },
+  "reversed": false,
+  "folder": "002_Blue_JI_Stage",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -121.50426671920414
+  },
+  "useDefaultConstraints": true
+}
