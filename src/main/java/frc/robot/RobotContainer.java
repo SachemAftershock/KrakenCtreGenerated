@@ -59,46 +59,46 @@ public class RobotContainer {
     private Command coral_Eject = new CoralGrappleCommand(mElevatorSubsystem, false);
     private Command coral_Receive = new CoralGrappleCommand(mElevatorSubsystem, true);
     
-    private Command sequenceBlue4CoralCommand = new SequentialCommandGroup(
-        (new ParallelCommandGroup(
-                (new PathPlannerAuto("001.1_Blue_Outside_to_Reef_J")),
-                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2))).andThen
-        (new DelayCommand(0.1)).andThen
-        (new CoralGrappleCommand(mElevatorSubsystem, false) ).andThen // eject Coral
-        (new DelayCommand(0.45)).andThen
-        (new ParallelCommandGroup(
-                (new PathPlannerAuto("001.2_Blue_Reef_J_to_Human_Player")),
-                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eReceive))
-                )).andThen
-        (new CoralGrappleCommand(mElevatorSubsystem, true)).andThen // intake Coral
-        (new ParallelCommandGroup(
-                (new PathPlannerAuto("001.3_Human_Player_to_Blue_Reef_J")),
-                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL1))
-                )).andThen
-        (new CoralGrappleCommand(mElevatorSubsystem, false))).andThen // eject Coral
-        (new DelayCommand(0.45)).andThen
-        (new ParallelCommandGroup(
-                (new PathPlannerAuto("001.2_Blue_Reef_J_to_Human_Player")),
-                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eReceive))
-                )).andThen
-        (new CoralGrappleCommand(mElevatorSubsystem, true)).andThen // intake Coral
-        (new ParallelCommandGroup(
-                (new PathPlannerAuto("001.4_Human_Player_to_Blue_Reef_I")),
-                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2))
-                )).andThen
-        (new CoralGrappleCommand(mElevatorSubsystem, false)).andThen // eject Coral
-        (new DelayCommand(0.45)).andThen
-        (new ParallelCommandGroup(
-                (new PathPlannerAuto("001.5_Blue_Reef_I_to_Human_Player")),
-                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eReceive))
-                )).andThen
-        (new CoralGrappleCommand(mElevatorSubsystem, true)).andThen // intake Coral
-        (new ParallelCommandGroup(
-                (new PathPlannerAuto("001.4_Human_Player_to_Blue_Reef_I")),
-                (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL1))
-                )).andThen
-        (new CoralGrappleCommand(mElevatorSubsystem, false)) // eject Coral
-        ); 
+//     private Command sequenceBlue4CoralCommand = new SequentialCommandGroup(
+//         (new ParallelCommandGroup(
+//                 (new PathPlannerAuto("001.1_Blue_Outside_to_Reef_J")),
+//                 (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2))).andThen
+//         (new DelayCommand(0.1)).andThen
+//         (new CoralGrappleCommand(mElevatorSubsystem, false) ).andThen // eject Coral
+//         (new DelayCommand(0.45)).andThen
+//         (new ParallelCommandGroup(
+//                 (new PathPlannerAuto("001.2_Blue_Reef_J_to_Human_Player")),
+//                 (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eReceive))
+//                 )).andThen
+//         (new CoralGrappleCommand(mElevatorSubsystem, true)).andThen // intake Coral
+//         (new ParallelCommandGroup(
+//                 (new PathPlannerAuto("001.3_Human_Player_to_Blue_Reef_J")),
+//                 (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL1))
+//                 )).andThen
+//         (new CoralGrappleCommand(mElevatorSubsystem, false))).andThen // eject Coral
+//         (new DelayCommand(0.45)).andThen
+//         (new ParallelCommandGroup(
+//                 (new PathPlannerAuto("001.2_Blue_Reef_J_to_Human_Player")),
+//                 (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eReceive))
+//                 )).andThen
+//         (new CoralGrappleCommand(mElevatorSubsystem, true)).andThen // intake Coral
+//         (new ParallelCommandGroup(
+//                 (new PathPlannerAuto("001.4_Human_Player_to_Blue_Reef_I")),
+//                 (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2))
+//                 )).andThen
+//         (new CoralGrappleCommand(mElevatorSubsystem, false)).andThen // eject Coral
+//         (new DelayCommand(0.45)).andThen
+//         (new ParallelCommandGroup(
+//                 (new PathPlannerAuto("001.5_Blue_Reef_I_to_Human_Player")),
+//                 (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eReceive))
+//                 )).andThen
+//         (new CoralGrappleCommand(mElevatorSubsystem, true)).andThen // intake Coral
+//         (new ParallelCommandGroup(
+//                 (new PathPlannerAuto("001.4_Human_Player_to_Blue_Reef_I")),
+//                 (new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL1))
+//                 )).andThen
+//         (new CoralGrappleCommand(mElevatorSubsystem, false)) // eject Coral
+//         ); 
 
     // Create the constraints to use while pathfinding. The constraints defined in the path will only be used for the path.
     private PathConstraints constraints_PathFinder = new PathConstraints(
@@ -271,7 +271,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        System.out.println("Setting Autonomous Command: " + sequenceBlue4CoralCommand.getName());
+        //System.out.println("Setting Autonomous Command: " + sequenceBlue4CoralCommand.getName());
         //return sequenceBlue4CoralCommand;
         return Auto_001_Blue_Outside_Coral_J2J1I2I1;
         //return Auto_002_Blue_Move_Somewhere;
