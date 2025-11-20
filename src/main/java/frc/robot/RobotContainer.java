@@ -120,7 +120,7 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.025).withRotationalDeadband(MaxAngularRate * 0.025) // Add a deadband, keep it tight for precision control (no jerk)
+            .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05) // Add a deadband, keep it tight for precision control (no jerk)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -215,22 +215,24 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        primaryController.leftTrigger().whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(1.0, 1.0, new Rotation2d(45)), false));
-        primaryController.rightTrigger().whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(0.0, 0.0, new Rotation2d(0)), true));
+        primaryController.leftTrigger().onTrue(new MoveToPoseCommand(drivetrain, new Pose2d(1.0, 1.0, new Rotation2d(45)), false));
+        primaryController.rightTrigger().onTrue(new MoveToPoseCommand(drivetrain, new Pose2d(0.0, 0.0, new Rotation2d(0)), false));
 
         if (pathfindingCommand_Anywhere_to_J != null) {
-                primaryController.povLeft().whileTrue(pathfindingCommand_Anywhere_to_J);
+                System.out.print("pathfindingCommand_Anywhere_to_J not null");
+                primaryController.povLeft().onTrue(pathfindingCommand_Anywhere_to_J);
         }
 
         if (pathfindingCommand_Anywhere_to_I != null) {
-                primaryController.povRight().whileTrue(pathfindingCommand_Anywhere_to_I);
+                System.out.print("pathfindingCommand_Anywhere_to_I not null");
+                primaryController.povRight().onTrue(pathfindingCommand_Anywhere_to_I);
         }
 
         // Aim down field towards opposing alliance.  Stay at same field coordinate. 
-        primaryController.povUp().whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(0)), true));
+        primaryController.povUp().onTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(0)), true));
         
         // Aim towards own alliance direction.  Stay at same field coordinate. 
-        primaryController.povDown().whileTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(180)), true));
+        primaryController.povDown().onTrue(new MoveToPoseCommand(drivetrain, new Pose2d(drivetrain.getState().Pose.getTranslation().getX(), drivetrain.getState().Pose.getTranslation().getY(), new Rotation2d(180)), true));
 
 
 // This was unneccessary, see secondary controller does it already.  May not need aftershockXboxController.  Remove it if not. 
@@ -257,13 +259,13 @@ public class RobotContainer {
                 .onTrue(new NudgeElevatorCommand(mElevatorSubsystem, -0.15));
 
         // Move Elevator Height
-        secondaryController.povDown().whileTrue(new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eReceive));
-        secondaryController.povLeft().whileTrue(new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL1));
-        secondaryController.povUp().whileTrue(new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2));
-        secondaryController.povRight().whileTrue(new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL3));
+        secondaryController.povDown().onTrue(new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eReceive));
+        secondaryController.povLeft().onTrue(new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL1));
+        secondaryController.povUp().onTrue(new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2));
+        secondaryController.povRight().onTrue(new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL3));
 
-        secondaryController.leftTrigger().whileTrue(new CoralGrappleCommand(mElevatorSubsystem, true));
-        secondaryController.rightTrigger().whileTrue(new CoralGrappleCommand(mElevatorSubsystem, false));
+        secondaryController.leftTrigger().onTrue(new CoralGrappleCommand(mElevatorSubsystem, true));
+        secondaryController.rightTrigger().onTrue(new CoralGrappleCommand(mElevatorSubsystem, false));
 
         secondaryController.a().whileTrue(new PushOutCommand(mAlgaePushSubsystem));
         secondaryController.b().whileTrue(new PushInCommand(mAlgaePushSubsystem));
@@ -273,8 +275,8 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         //System.out.println("Setting Autonomous Command: " + sequenceBlue4CoralCommand.getName());
         //return sequenceBlue4CoralCommand;
-        return Auto_001_Blue_Outside_Coral_J2J1I2I1;
-        //return Auto_002_Blue_Move_Somewhere;
+        //return Auto_001_Blue_Outside_Coral_J2J1I2I1;
+        return Auto_002_Blue_Move_Somewhere;
         //return autoChooser.getSelected();  // Use this one to list all the available autopaths in the deploy directory.
     }
 }

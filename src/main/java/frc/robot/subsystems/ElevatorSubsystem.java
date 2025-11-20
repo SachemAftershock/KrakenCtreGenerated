@@ -118,7 +118,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         Measurement measurementCoral = mGrappleLaserCan.getMeasurement();
         if (measurementCoral != null) {
             SmartDashboard.putBoolean("Is Coral in",
-                    measurementCoral.distance_mm > ElevatorConstants.kCoralInLaserCanDistance);
+                    measurementCoral.distance_mm < ElevatorConstants.kCoralInLaserCanDistance);
             if (measurementCoral.distance_mm < ElevatorConstants.kCoralInLaserCanDistance) {
                 return true;
             }
