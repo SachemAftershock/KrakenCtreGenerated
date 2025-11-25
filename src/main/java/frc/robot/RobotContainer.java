@@ -139,6 +139,8 @@ public class RobotContainer {
     private final Command Auto_001_Blue_Outside_Coral_J2J1I2I1;
     private final Command Auto_002_Blue_Move_Somewhere;
 
+    private final boolean enableSysIdControls = false;
+
     public RobotContainer() {
         
         // Command goToL2 = new MoveToHeightCommand(mElevatorSubsystem, ElevatorPosEnum.eL2);
@@ -203,12 +205,16 @@ public class RobotContainer {
         primaryController.b().whileTrue(drivetrain.applyRequest(() -> point
                 .withModuleDirection(new Rotation2d(-primaryController.getLeftY(), -primaryController.getLeftX()))));
 
+        
+        if (enableSysIdControls) {
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        // primaryController.back().and(primaryController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        // primaryController.back().and(primaryController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        // primaryController.start().and(primaryController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        // primaryController.start().and(primaryController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+                //primaryController.back().and(primaryController.y()).and(enableSysIdControls).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+                primaryController.back().and(primaryController.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+                primaryController.back().and(primaryController.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+                primaryController.start().and(primaryController.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+                primaryController.start().and(primaryController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        }
 
         // reset the field-centric heading on left bumper press
         primaryController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
